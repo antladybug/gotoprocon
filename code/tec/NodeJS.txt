@@ -3,3 +3,4 @@ https://nodejs.org/en
 npm init
 npm install obniz 
 
+npm install puppeteer
