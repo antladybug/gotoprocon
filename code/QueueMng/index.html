@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>空席行列管理</title>
+    <link rel = "icon" type = "image/png" href = "./img/icon.ico" />
+    <style type="text/css">
+		.button { visibility: hidden; }
+		#info { font-size: 3rem; width: 100%; text-align: center; }
+        body { background-color: lemonchiffon; }
+        h1 {
+            position: relative;
+            color: saddlebrown;
+            line-height: 1.1;
+            font-size: 3.5rem;
+            -webkit-box-reflect: below -10px -webkit-linear-gradient(top,rgba(0,0,0,0),rgba(0,0,0,0) 10%,rgba(0, 0, 0, 0.6));
+            width: 100%;
+            text-align: center;
+        }
+        table { border-spacing: 2rem; width: 100%; margin: auto; }
+        table td{ width: 100%; height: 11rem; background-color: palegoldenrod; text-align: center; font-size: 3rem; border-radius: .5rem; padding-bottom: 1rem; }
+        #infoNo1::before, #infoNo2::before { content:  "テーブル1状況\a"; font-size: 1rem; color: darkolivegreen; white-space:pre; line-height: 1rem; }
+        #infoNo2::before { content:  "テーブル2状況\a"; }
+    </style>
+    <script type="module">
+        window.onload = function(){
+            document.forms["queue"];
+        }
+        // API取得
+        import data from "https://script.googleusercontent.com/macros/echo?user_content_key=zJkk1WuOOoX5YwcAb4jPi1_-yi3ozW6-wix5FlGGu_qCcDdIEBWNKv-r7N-5sVXZd7OprD6PnNQcuRzIu0XKtG9sI2WUcjV_m5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnGHpG_kMqrSWCT5iAVDDsK4jJQV1llmXHnsrcaZ2PVOXeCrcJgQfMkw38QM9rB3nXM9f_uhQknB_WlEu3WR5Hgdc1KUNVTRhhtz9Jw9Md8uu&lib=M_Nx1G9t20cyEcq-AcWp8mr8hS28EQHRL" assert { type: "json" };
+
+        var t1_info = "空いた";    
+        var t2_info = "空いた";
+        var info1 = document.getElementById("infoNo1");
+        var info2 = document.getElementById("infoNo2");
+        
+        for( var i = 0; i < data.length;i++ ){
+            var num = data[ i ].メッセージ.slice( 0, 1 );
+            switch ( num ){
+                // 座席1の情報
+                case '1':
+                    t1_info = data[ i ].メッセージ.slice( -3 );
+                    t1_info = ChangeMsgPreP( t1_info );
+                    break;
+                // 座席2の情報
+                case '2':
+                    t2_info = data[ i ].メッセージ.slice( -3 );
+                    t2_info = ChangeMsgPreP( t2_info );
+                    break;
+                default: break; // N/Aケース
+            };
+        }
+        //背景色設定
+        ChangeBG( t1_info, 1 );
+        ChangeBG( t2_info, 2 );
+
+        //テーブル1情報
+        info1.innerHTML = t1_info;
+        //テーブル2情報
+        info2.innerHTML = t2_info;
+
+        var msg = "2席とも空席です。";
+        if ( t1_info === "利用中" && t2_info === "利用中" )
+            msg = "ただいま満席です。";
+        else if ( ( t1_info === "利用中" && t2_info === "支度中" ) || ( t1_info === "支度中" && t2_info === "利用中" ) || ( t1_info === "支度中" && t2_info === "支度中" ) )
+            msg = "満室ですが、会計支度中のテーブルがあります。";
+        else if ( ( t1_info === "空いた" && t2_info === "支度中" ) || ( t1_info === "空いた" && t2_info === "利用中" ) )
+            msg = "空席が1席あります。";
+        
+        var info = document.getElementById("info");
+        info.innerHTML = msg;
+        
+        function ChangeBG( msg, num ) {
+            if ( msg === "利用中" ){
+                if ( num === 1 ){
+                    info1.style.backgroundColor = 'grey';
+                }
+                else {
+                    info2.style.backgroundColor = 'grey';
+                }
+            }
+            else if ( msg === "支度中" ) {
+                if ( num === 1 ){
+                    info1.style.backgroundColor = 'gold';
+                }
+                else {
+                    info2.style.backgroundColor = 'gold';
+                }
+            }
+        }
+        // 離席中の文字変更
+        function ChangeMsgPreP( msg ) {
+            if ( msg === "始めた" ){
+                return "支度中";
+            }
+            return msg;
+        }
+    </script>
+</head>
+
+<body>
+    <h1 class = "tablehead">テーブル情報</h1>
+    <form action="queue" method="POST"><input type="submit" class="button"></form>
+    <div id = "info">取得中…</div>
+    <table>
+        <tr><td id = "infoNo1">…</td></tr>
+        <tr><td id = "infoNo2">…</td></tr>
+    </table>
+</body>
+</html>
