@@ -1,0 +1,75 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="/css/starter-sample.css" />
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script
+      src="https://unpkg.com/obniz@3.26.0/obniz.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="obniz-debug"></div>
+
+    <div class="wrap">
+      <div class="print">
+        <h3 class="text-center">Print words on obniz</h3>
+        <div>
+          <input
+            type="text"
+            id="text"
+            value="Hello World"
+            placeholder="Input in freely"
+          />
+          <button class="btn btn-primary" id="showtime">Print on obniz</button>
+        </div>
+      </div>
+
+      <div class="switch">
+        <h3 class="text-center">Swtich</h3>
+        <span id="print">undefined</span>
+      </div>
+
+      <div class="led">
+        <h3 class="text-center">Turning on a LED</h3>
+        <button class="btn btn-primary" id="on">LED ON</button>
+        <button class="btn btn-outline-primary" id="off">LED OFF</button>
+        <dl>
+          <dt>Demo Pin assign</dt>
+          <dd>- io0:LED anode</dd>
+          <dd>- io0:LED cthode</dd>
+          <dd>- Switch state will be printed on browser</dd>
+        </dl>
+      </div>
+    </div>
+
+    <script>
+      var obniz = new Obniz("6256-7466");
+      obniz.onconnect = async function() {
+          setInterval(async function(){  
+            // 人感センサー
+            sensor=obniz.wired( "HC-SR505", { gnd: 0, vcc: 1, signal: 3 } ) ;
+            sensor.onchange=function(val){
+              if( val != true ){      //検知なしに変化
+                obniz.display.clear();
+                obniz.display.print( "OFF" );
+                led.off();
+              }
+              else　{               //人の検知ありに変化
+                obniz.display.clear();
+                obniz.display.print( "ON" );
+                //◆LED
+                led=obniz.wired( "LED", { anode: 8, cathode: 11 } );
+                led.on();
+              };
+				    };
+          }, 5000);
+			};
+    </script>
+  </body>
+</html>
