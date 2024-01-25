@@ -24,8 +24,13 @@
 						'jpn',
 						{ logger: m => console.log(m) }
 					).then(({ data: { text } }) => {
-						const out = document.getElementById( 'output' )
+						const out = document.getElementById( 'output' );
+						// ******************
+						// 取得したtextを出力
+						// ******************
 						out.innerHTML = text;
+						console.log( text );
+						checkText ( text );
 					} );
 				} ).catch( function ( error ) {
 					console.error( error );
@@ -59,7 +64,6 @@
 					} );
 				} );
 			}
-
 			function readImage ( image ) {
 				return new Promise ( function ( resolve, reject ) {
 					const reader = new FileReader();
@@ -75,6 +79,10 @@
 					img.onerror = function ( e ) { reject( e ) };
 					img.src = src
 				} );
+			}
+			function checkText ( text ) {
+				var ch = text.substring( 0, 8 );
+				console.log ( ch );
 			}
 		});
 	</script>
