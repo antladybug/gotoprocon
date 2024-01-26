@@ -82,27 +82,31 @@
 			}
 			function checkText ( text ) {
 				if ( checkExpirationDay( text ) ) {
-					alert( "go!!" ); // DBへ転送
+					alert( "go!!" );; // DBへ転送
 				}
 			}
 			function checkExpirationDay ( text ) {
-				let ch = "賞 味 期 限 ";
+				// ***** 検索文字 *****
+				let ch = [	"賞 味 期 限 " ,
+							"消 費 期 限 " ];
 				
-				for ( let i = 0; i < text.length - 7; i++ ) {
-					let MATCH_FLG = false;
-					for ( let j = 0; j < ch.length; j++ ) {
-						if ( text[ i + j ] !== ch[j]  ) {
-							break;
-						}
-						else {
-							MATCH_FLG = true;
-						}
-						if ( j === ch.length - 1 ) {
-							// *************
-							// 検索文字一致
-							// *************
-							console.log( "okkkkkkk" );
-							return true;
+				for ( let arrayN = 0; arrayN < ch.length; arrayN++ ) { 
+					for ( let i = 0; i < text.length - 7; i++ ) {
+						let MATCH_FLG = false;
+						for ( let j = 0; j < ch[ arrayN ].length; j++ ) {
+							if ( text[ i + j ] !== ch[ arrayN ][j]  ) {
+								break;
+							}
+							else {
+								MATCH_FLG = true;
+							}
+							if ( j === ch[ arrayN ].length - 1 ) {
+								// *************
+								// 検索文字一致
+								// *************
+								console.log( "okkkkkkk" );
+								return true;
+							}
 						}
 					}
 				}
