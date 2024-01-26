@@ -81,8 +81,32 @@
 				} );
 			}
 			function checkText ( text ) {
-				var ch = text.substring( 0, 8 );
-				console.log ( ch );
+				if ( checkExpirationDay( text ) ) {
+					alert( "go!!" ); // DBへ転送
+				}
+			}
+			function checkExpirationDay ( text ) {
+				let ch = "賞 味 期 限 ";
+				
+				for ( let i = 0; i < text.length - 7; i++ ) {
+					let MATCH_FLG = false;
+					for ( let j = 0; j < ch.length; j++ ) {
+						if ( text[ i + j ] !== ch[j]  ) {
+							break;
+						}
+						else {
+							MATCH_FLG = true;
+						}
+						if ( j === ch.length - 1 ) {
+							// *************
+							// 検索文字一致
+							// *************
+							console.log( "okkkkkkk" );
+							return true;
+						}
+					}
+				}
+				return false;
 			}
 		});
 	</script>
