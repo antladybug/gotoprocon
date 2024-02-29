@@ -8,3 +8,6 @@ npm install obniz
 
 npm install puppeteer
 npm install node-cron
+
+実行するときは、上記の実行環境にコマンドラインで移動。
+「node xx.js」コマンドで実行できる。
