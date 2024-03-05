@@ -15,10 +15,14 @@
 			servo = obniz.wired("ServoMotor", { signal:2, vcc:1, gnd:0 } );
 		}
 		function ServoOnCW() {
+			var cnt = 0;
 			servo.on();
 			obniz.repeat( async function () {
+				if ( cnt < 2  )
+					servo.off();
 				servo.angle( 0 ); // 時計まわり
-			}, 2000 );
+				cnt++;
+			}, 1000 );
 		}
 		function ServoOnCCW() {
 			servo.on();
