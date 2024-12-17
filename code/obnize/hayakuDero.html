@@ -1,0 +1,88 @@
+<html>
+	<head>
+		<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+		<script src="https://unpkg.com/obniz@3.29.0/obniz.js" crossorigin="anonymous"></script>
+		<script>
+			var obniz = new Obniz("0025-7904");
+			let lineInformation = 'その他';
+			obniz.onconnect = async function() {
+				obniz.display.print("Start!");
+				let date = new Date();
+				var time = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2)
+				obniz.display.print(time);
+				switch (date.getHours()){
+					// 出力用：hourを設定
+					case  9:
+					case 10:
+					case 11:
+					case 12:
+					case 13:
+					case 14:
+					case 15:
+					case 16:
+					case 17:
+					case 18:
+						GetStationInfo ();
+						SetLED();
+					dafault:
+						break;
+				}
+				function SetLED() {
+					obniz.display.print( lineInformation );
+					let fLED = obniz.wired("WS2811", {gnd:9, vcc: 10, din: 11});
+					if ( lineInformation == '平常運転' ){
+						OnSpeaker( 202 );
+						fLED.rgb( 0, 255, 0 ); // green
+					}
+					else if ( ( lineInformation == '列車遅延' ) || ( lineInformation == '運転状況' ) || ( lineInformation == '運転再開' ) ){
+						OnSpeaker( 101 );
+						fLED.rgb( 255, 128, 0 ); // orange
+					}
+					else if ( lineInformation == '運転見合わせ' ){
+						OnSpeaker( 102 );
+						fLED.rgb(255, 0, 0); // red
+					}
+					else if ( ( lineInformation == '運転情報' ) || ( lineInformation == '運転計画' ) || ( lineInformation == 'その他' ) ){
+						OnSpeaker( 103 );
+						fLED.rgb( 255, 255, 255 ); // white
+					}
+					else {
+						fLED.rgb( 32, 32, 32 ); // grey
+					}
+				}
+				function OnSpeaker( mode ){
+					var mp3 = obniz.wired("Grove_MP3", {gnd:0, vcc:1, mp3_rx:2, mp3_tx:3});
+					mp3.initWait();
+					mp3.setVolume(5);
+					mp3.play( mode );
+				}
+		 	}
+			function GetStationInfo (){
+				$.get("https://isclabo.thick.jp/train_all.php",
+				function(data){
+					//コンソール基本情報取得
+					let lastupdeted = data.lastUpdated;
+					console.log( lastupdeted );
+					let selectLineElem = document.getElementById( "lineSelect" );
+					
+					let lineName = data.data[4][0].railName;
+					lineInformation = data.data[4][0].status;
+					$("#lineSelected").text('1路線目の名称：'+lineName)
+					console.log(lineName);
+					console.log(lineInformation);
+					//1路線目基本情報
+					$("#lineName").text(lineName+'は'+ lineInformation + 'です。');
+					//1路線目運行情報
+				});
+			}
+		</script>
+	<body>
+		<div id="obniz-debug"></div>
+		<div style  =  "width: 90%; margin: 0 auto;">
+			<h1>アラーム・運行情報通知板</h1>
+			<div id = "areaSelected"></div>
+			<div id = "lineSelected"></div>
+			<div>運行情報：<span id = "lineName"></span><span id = "lineInformation"></span></div>
+		</div>
+	</body>
+</html>
