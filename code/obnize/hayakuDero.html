@@ -3,7 +3,7 @@
 		<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 		<script src="https://unpkg.com/obniz@3.29.0/obniz.js" crossorigin="anonymous"></script>
 		<script>
-			var obniz = new Obniz("0025-7904");
+			var obniz = new Obniz("9701-8828");
 			let lineInformation = 'その他';
 			obniz.onconnect = async function() {
 				obniz.display.print("Start!");
@@ -29,10 +29,10 @@
 				}
 				function SetLED() {
 					obniz.display.print( lineInformation );
-					let fLED = obniz.wired("WS2811", {gnd:9, vcc: 10, din: 11});
+					let fLED = obniz.wired("WS2812", {gnd:9, vcc: 10, din: 11});
 					if ( lineInformation == '平常運転' ){
 						OnSpeaker( 202 );
-						fLED.rgb( 0, 255, 0 ); // green
+						fLED.rgb( 255, 0, 0 ); // green
 					}
 					else if ( ( lineInformation == '列車遅延' ) || ( lineInformation == '運転状況' ) || ( lineInformation == '運転再開' ) ){
 						OnSpeaker( 101 );
@@ -40,14 +40,14 @@
 					}
 					else if ( lineInformation == '運転見合わせ' ){
 						OnSpeaker( 102 );
-						fLED.rgb(255, 0, 0); // red
+						fLED.rgb( 0, 255, 0); // red
 					}
 					else if ( ( lineInformation == '運転情報' ) || ( lineInformation == '運転計画' ) || ( lineInformation == 'その他' ) ){
 						OnSpeaker( 103 );
-						fLED.rgb( 255, 255, 255 ); // white
+						fLED.rgb( 255, 128, 0 ) // yellow
 					}
 					else {
-						fLED.rgb( 32, 32, 32 ); // grey
+						fLED.rgb( 255, 128, 128 ); // grey
 					}
 				}
 				function OnSpeaker( mode ){
