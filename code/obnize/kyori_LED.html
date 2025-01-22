@@ -1,0 +1,48 @@
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+  <script src="https://unpkg.com/obniz@3.24.0/obniz.js"></script>
+  <script type="text/javascript">
+    let obniz = new Obniz("3579-6145");  //自分のobnizの番号に書き換えて下さい
+    /*  ②ここに必要な変数宣言を書きます  */
+     let led1, led2, led3, distSensor;
+    obniz.onconnect = async function () {
+      /*  ③ここに様々なJavaScriptの処理を書きます  */
+      led1 = obniz.wired("LED", {anode: 0, cathode: 1});
+      led2 = obniz.wired("LED", {anode: 2, cathode: 3});
+      led3 = obniz.wired("LED", {anode: 4, cathode: 5}); // 距離:赤が6
+      distSensor = obniz.wired("GP2Y0A21YK0F",{vcc:6, gnd:7, signal:8});
+
+      //対象物までの距離が変化した時
+      distSensor.start( function( distance ){
+        $("#distance").text(distance);  //距離をページ内に表示
+        if(distance < 300){             //距離が300mm(=30cm)未満なら
+          led1.on();
+          led3.off(); 
+          obniz.display.drawing(false);          //※
+        obniz.display.clear();                 //ディスプレイをクリア
+        obniz.display.print("満") 
+        obniz.display.drawing(true); 
+                   //LEDを点灯
+        }
+        else{
+          led1.off();
+          led3.on();    
+          obniz.display.drawing(false);          //※
+        obniz.display.clear();                 //ディスプレイをクリア
+        obniz.display.print("空")
+        obniz.display.drawing(true); 
+               //LEDを消灯
+        }
+      });
+
+}
+  </script>
+<script src='/portal/lmsinc/rewritejs.php'></script></head>
+<body>
+  <div id="obniz-debug"></div>
+  <h1>Webプログラミング入門(obniz)</h1>
+  <!--  ①ここに任意のHTMLを書きます -->
+  <p>距離は <span id="distance">0</span>mmです</p>
+</body>
